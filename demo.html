@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .container-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .doc-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white container-shadow">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">
+                <span class="text-indigo-600">Admin</span> Console
+            </h1>
+            <nav class="flex items-center space-x-4 text-sm font-medium">
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Search students</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Approve/Reject documents</a>
+                <button onclick="logout()" class="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Student List Column -->
+        <div class="md:col-span-1 bg-white p-6 rounded-xl container-shadow flex flex-col h-full">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Search students</h2>
+            <p class="text-sm text-gray-500 mb-4">Name, email, enrollment, program</p>
+            <input type="text" id="search-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" placeholder="Start typing...">
+            
+            <div id="student-list" class="space-y-4 overflow-y-auto flex-grow">
+                <p class="text-gray-500 text-center mt-8">Loading students...</p>
+            </div>
+        </div>
+
+        <!-- Student Details Column -->
+        <div class="md:col-span-2 bg-white p-6 rounded-xl container-shadow h-full">
+            <div id="student-details-container" class="hidden">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Student details</h2>
+                
+                <div id="profile-info" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div>
+                        <p class="text-gray-500 text-sm">Full name: <span id="full-name" class="font-medium text-gray-900"></span></p>
+                        <p class="text-gray-500 text-sm">Enrollment: <span id="enrollment" class="font-medium text-gray-900"></span></p>
+                        <p class="text-gray-500 text-sm">Year: <span id="year" class="font-medium text-gray-900"></span></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Email: <span id="email" class="font-medium text-gray-900"></span></p>
+                        <p class="text-gray-500 text-sm">Program: <span id="program" class="font-medium text-gray-900"></span></p>
+                        <p class="text-gray-500 text-sm">Phone: <span id="phone" class="font-medium text-gray-900"></span></p>
+                    </div>
+                </div>
+
+                <div id="document-counts" class="flex flex-wrap space-x-2 text-sm font-medium mb-8">
+                    <span id="pending-count" class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">0 pending</span>
+                    <span id="approved-count" class="bg-green-100 text-green-800 px-3 py-1 rounded-full">0 approved</span>
+                    <span id="rejected-count" class="bg-red-100 text-red-800 px-3 py-1 rounded-full">0 rejected</span>
+                    <span id="total-count" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full">0 total</span>
+                </div>
+
+                <h3 id="docs-header" class="text-xl font-semibold text-gray-800 mb-4">Documents for <span id="student-email-docs"></span></h3>
+
+                <div class="flex space-x-2 mb-6">
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium bg-indigo-50 text-indigo-700" data-filter="all">All</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="pending">Pending</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="approved">Approved</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="rejected">Rejected</button>
+                </div>
+
+                <div id="documents-list" class="space-y-6">
+                    <p class="text-gray-500 text-center mt-8">Select a student to view their documents.</p>
+                </div>
+            </div>
+            
+            <div id="no-student-selected" class="flex items-center justify-center h-full text-center text-gray-500">
+                <p>Select a student to view their details and documents.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let studentsData = [];
+        let documentsData = [];
+        let currentStudent = null;
+
+        /**
+         * Fetches initial data from a hypothetical back-end API.
+         * This function should be replaced with your actual data fetching logic.
+         */
+        async function fetchInitialData() {
+            try {
+                // In a real application, you would fetch from your API endpoints.
+                // const studentsResponse = await fetch('/api/students');
+                // const documentsResponse = await fetch('/api/documents');
+                
+                // For this example, we'll simulate an empty fetch
+                studentsData = []; // Replace with actual students from your DB
+                documentsData = []; // Replace with actual documents from your DB
+                
+                renderStudents(studentsData);
+            } catch (error) {
+                document.getElementById('student-list').innerHTML = '<p class="text-red-500 text-center mt-8">Failed to load data. Please check your back-end connection.</p>';
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        /**
+         * Function to render the list of students in the left panel.
+         * @param {Array} students The array of student objects to display.
+         */
+        function renderStudents(students) {
+            const studentListDiv = document.getElementById('student-list');
+            studentListDiv.innerHTML = '';
+            if (students.length === 0) {
+                studentListDiv.innerHTML = '<p class="text-gray-500 text-center mt-8">No students found.</p>';
+                return;
+            }
+
+            students.forEach(student => {
+                const docCount = documentsData.filter(doc => doc.studentId === student.id).length;
+                const studentCard = document.createElement('div');
+                studentCard.className = `p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200`;
+                studentCard.innerHTML = `
+                    <h3 class="text-md font-semibold text-gray-800">${student.name}</h3>
+                    <p class="text-sm text-gray-500">${student.email}</p>
+                    <p class="text-sm text-gray-500">Enroll: ${student.enrollment} • ${student.program} • Year ${student.year}</p>
+                    <div class="mt-2 text-xs text-right font-medium text-gray-500">${docCount} doc${docCount !== 1 ? 's' : ''}</div>
+                `;
+                studentCard.addEventListener('click', () => {
+                    renderStudentDetails(student);
+                });
+                studentListDiv.appendChild(studentCard);
+            });
+        }
+
+        /**
+         * Function to display the details of the selected student.
+         * @param {object} student The student object to display.
+         */
+        function renderStudentDetails(student) {
+            currentStudent = student;
+            document.getElementById('no-student-selected').classList.add('hidden');
+            document.getElementById('student-details-container').classList.remove('hidden');
+
+            document.getElementById('full-name').textContent = student.name || 'N/A';
+            document.getElementById('enrollment').textContent = student.enrollment || 'N/A';
+            document.getElementById('program').textContent = student.program || 'N/A';
+            document.getElementById('year').textContent = student.year || 'N/A';
+            document.getElementById('email').textContent = student.email || 'N/A';
+            document.getElementById('phone').textContent = student.phone || 'N/A';
+            document.getElementById('student-email-docs').textContent = student.email || 'N/A';
+
+            const studentDocs = documentsData.filter(doc => doc.studentId === student.id);
+            renderDocuments(studentDocs);
+            updateDocumentCounts(studentDocs);
+        }
+
+        /**
+         * Function to update the document status counts.
+         * @param {Array} docs The documents associated with the current student.
+         */
+        function updateDocumentCounts(docs) {
+            const pending = docs.filter(d => d.status === 'pending').length;
+            const approved = docs.filter(d => d.status === 'approved').length;
+            const rejected = docs.filter(d => d.status === 'rejected').length;
+            const total = docs.length;
+
+            document.getElementById('pending-count').textContent = `${pending} pending`;
+            document.getElementById('approved-count').textContent = `${approved} approved`;
+            document.getElementById('rejected-count').textContent = `${rejected} rejected`;
+            document.getElementById('total-count').textContent = `${total} total`;
+        }
+
+        /**
+         * Function to render the list of documents for a student.
+         * @param {Array} documents The array of document objects to display.
+         * @param {string} filter The current filter status ('all', 'pending', 'approved', 'rejected').
+         */
+        function renderDocuments(documents, filter = 'all') {
+            const documentsListDiv = document.getElementById('documents-list');
+            documentsListDiv.innerHTML = '';
+            let filteredDocs = documents;
+
+            if (filter !== 'all') {
+                filteredDocs = documents.filter(doc => doc.status === filter);
+            }
+
+            if (filteredDocs.length === 0) {
+                documentsListDiv.innerHTML = `<p class="text-gray-500 text-center mt-8">No documents to show with this filter.</p>`;
+                return;
+            }
+
+            filteredDocs.forEach(doc => {
+                const statusColor = doc.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                   doc.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                   'bg-yellow-100 text-yellow-800';
+                
+                const docCard = document.createElement('div');
+                docCard.className = `p-4 rounded-lg bg-gray-50 container-shadow`;
+                docCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-semibold text-indigo-600">${doc.title}</span>
+                            <span class="doc-status ${statusColor}">${doc.status}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">${doc.fileName} • ${doc.size} • ${doc.date}</p>
+                    <div class="space-x-2">
+                        <button onclick="approveDocument(${doc.id})" class="px-3 py-1 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition">Approve</button>
+                        <button onclick="rejectDocument(${doc.id})" class="px-3 py-1 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition">Reject</button>
+                    </div>
+                `;
+                documentsListDiv.appendChild(docCard);
+            });
+        }
+        
+        // Event listeners for filtering documents
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('bg-indigo-50', 'text-indigo-700');
+                    btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+                });
+                e.target.classList.add('bg-indigo-50', 'text-indigo-700');
+                e.target.classList.remove('text-gray-600', 'hover:bg-gray-100');
+
+                if (currentStudent) {
+                    const studentDocs = documentsData.filter(doc => doc.studentId === currentStudent.id);
+                    renderDocuments(studentDocs, e.target.dataset.filter);
+                }
+            });
+        });
+
+        // Function to handle document approval
+        async function approveDocument(docId) {
+            // In a real app, this would send an API call to your back-end to update the document status.
+            // await fetch(`/api/documents/${docId}/approve`, { method: 'POST' });
+            
+            // For now, we'll just log the action and simulate an update.
+            console.log(`Approving document with ID: ${docId}`);
+            const doc = documentsData.find(d => d.id === docId);
+            if (doc) {
+                doc.status = 'approved';
+                renderStudentDetails(currentStudent);
+            }
+        }
+
+        // Function to handle document rejection
+        async function rejectDocument(docId) {
+            // In a real app, this would send an API call to your back-end to update the document status.
+            // await fetch(`/api/documents/${docId}/reject`, { method: 'POST' });
+
+            // For now, we'll just log the action and simulate an update.
+            console.log(`Rejecting document with ID: ${docId}`);
+            const doc = documentsData.find(d => d.id === docId);
+            if (doc) {
+                doc.status = 'rejected';
+                renderStudentDetails(currentStudent);
+            }
+        }
+        
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filteredStudents = studentsData.filter(student =>
+                student.name.toLowerCase().includes(query) ||
+                student.email.toLowerCase().includes(query) ||
+                student.enrollment.toLowerCase().includes(query) ||
+                student.program.toLowerCase().includes(query)
+            );
+            renderStudents(filteredStudents);
+        });
+
+        function logout() {
+            // In a real application, this would clear the session and redirect to the login page.
+            window.location.href = 'index.html';
+        }
+
+        // Initial data fetch on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchInitialData();
+        });
+    </script>
+</body>
+</html>

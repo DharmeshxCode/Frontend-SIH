@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+  <div class="container">
+    <div class="tab-buttons">
+      <button id="studentTab" class="active">Login as Student</button>
+      <button id="adminTab">Login as Admin</button>
+    </div>
+
+    <!-- Student Form -->
+    <div id="studentForm" class="form active">
+      <h2>Welcome to website</h2>
+      <p>Enter your credentials to continue</p>
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="student-email" placeholder="you@example.com">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="student-password" placeholder="••••••••">
+      </div>
+      <button id="student-login-btn" type="button" class="btn">Sign in</button>
+      <p class="note">By continuing you agree to our Terms & Privacy Policy</p>
+          <p class="create_account">New here? <a href="newacc.html">create new account</a></p>
+    </div>
+
+    <!-- Admin Form -->
+    <div id="adminForm" class="form">
+      <h2>Admin portal access</h2>
+      <p>Enter your credentials to continue</p>
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="admin-email" placeholder="admin@domain.com">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="admin-password" placeholder="••••••••">
+      </div>
+      <button id="admin-login-btn" type="button" class="btn">Sign in as Admin</button>
+      <p class="note">By continuing you agree to our Terms & Privacy Policy</p>
+    </div>
+  </div>
+
+  </div>  
+  <script src="script.js"></script>
+</body>
+</html>

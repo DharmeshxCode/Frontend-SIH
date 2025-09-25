@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="style1.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #5d3fd3;
+        }
+        .logo span {
+            color: #333;
+        }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        nav a {
+            text-decoration: none;
+            color: #666;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        nav a:hover, nav a.tab {
+            color: #5d3fd3;
+        }
+        main {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"], input[type="email"], input[type="number"], textarea, .file-upload {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #b0b0b0;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #5d3fd3;
+            box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn {
+            background-color: #5d3fd3;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn:hover {
+            background-color: #4b32b0;
+            transform: translateY(-2px);
+        }
+        .add-btn {
+            background-color: #5d3fd3;
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        .add-input-group {
+            display: flex;
+            align-items: center;
+        }
+        .add-input-group input {
+            flex: 1;
+        }
+        .photo-upload {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .photo-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #6c757d;
+        }
+        .file-select {
+            display: flex;
+            flex-direction: column;
+        }
+        .file-select label {
+            font-weight: normal;
+        }
+        .file-select input[type="file"] {
+            display: none;
+        }
+        .file-select .custom-file-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            text-align: center;
+        }
+        .single-column {
+            display: block;
+        }
+        .documents-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .documents-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        .document-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+        }
+        .document-card h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .document-card .category {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #5d3fd3;
+            background-color: rgba(93, 63, 211, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+        .document-card p {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin: 0.5rem 0 1rem;
+        }
+        .document-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .view-btn, .delete-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .view-btn:hover {
+            color: #5d3fd3;
+        }
+        .delete-btn:hover {
+            color: #dc3545;
+        }
+        .info-message {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header>
+         <div class="logo">🎓 <span>Student Portal</span></div>
+        <div class="header-controls">
+            <a href="portfolio.html" class="btn" style="text-decoration: none; font-weight: 500;">Generate Portfolio</a>
+            <nav>
+                <a href="#profile" class="tab">Profile</a>
+                <a href="#upload" class="tab">Upload</a>
+                <a href="#documents" class="tab">My Documents</a>
+                <a href="index.html" onclick="logout()">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="profile" class="page">
+            <h2>Profile</h2>
+
+            <h3>Personal & Professional Info</h3>
+            <form>
+                <div class="form-group">
+                    <div>
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Your Full Name" required>
+                    </div>
+                    <div>
+                        <label>Short professional title/role</label>
+                        <input type="text" placeholder="e.g. Web Developer">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label>Email</label>
+                        <input type="email" placeholder="you@example.com" required>
+                    </div>
+                    <div>
+                        <label>Phone number</label>
+                        <input type="text" placeholder="+91 1234567890">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label>LinkedIn</label>
+                        <input type="text" placeholder="https://linkedin.com/in/username">
+                    </div>
+                    <div>
+                        <label>GitHub</label>
+                        <input type="text" placeholder="https://github.com/username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label>Personal website</label>
+                        <input type="text" placeholder="https://yourdomain.com">
+                    </div>
+                </div>
+
+                <div class="photo-upload">
+                    <div class="photo-placeholder">👤</div>
+                    <div class="file-select">
+                        <label>Professional photo (optional)</label>
+                        <input type="file" id="photo-upload">
+                        <label for="photo-upload" class="custom-file-button">Choose File</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label>Enrollment no.</label>
+                        <input type="text" placeholder="IT24OP1024" required>
+                    </div>
+                    <div>
+                        <label>Program</label>
+                        <input type="text" placeholder="e.g. B.Tech CSE" required>
+                    </div>
+                    <div>
+                        <label>Year</label>
+                        <input type="number" placeholder="e.g. 3" required>
+                    </div>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>About</h3>
+                <div class="single-column">
+                    <label>Short bio/summary</label>
+                    <textarea placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>Skills</h3>
+                <div class="add-input-group">
+                    <label>Technical skills</label>
+                    <input type="text" placeholder="Add a skill">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+                <div class="add-input-group" style="margin-top: 1rem;">
+                    <label>Soft skills</label>
+                    <input type="text" placeholder="Add a soft skill">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+                <div class="add-input-group" style="margin-top: 1rem;">
+                    <label>Certifications</label>
+                    <input type="text" placeholder="Add a certification">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>Projects / Work Samples</h3>
+                <div class="form-group">
+                    <div>
+                        <label>Title</label>
+                        <input type="text" placeholder="Project Title">
+                    </div>
+                    <div>
+                        <label>Tech</label>
+                        <input type="text" placeholder="e.g. React, Node, PostgreSQL">
+                    </div>
+                </div>
+                <div class="single-column">
+                    <label>Description</label>
+                    <textarea placeholder="Describe your project..."></textarea>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label>Repo link</label>
+                        <input type="text" placeholder="https://github.com/...">
+                    </div>
+                    <div>
+                        <label>Live demo</label>
+                        <input type="text" placeholder="https://...">
+                    </div>
+                </div>
+                <button type="button" class="btn">Add project</button>
+                
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>Experience</h3>
+                <div class="form-group">
+                    <div>
+                        <label>Role</label>
+                        <input type="text" placeholder="Your role">
+                    </div>
+                    <div>
+                        <label>Company/Organization</label>
+                        <input type="text" placeholder="Company/Organization Name">
+                    </div>
+                    <div>
+                        <label>Duration</label>
+                        <input type="text" placeholder="e.g. Jun 2024 - Aug 2024">
+                    </div>
+                </div>
+                <div class="single-column">
+                    <label>Key responsibilities/achievements</label>
+                    <textarea placeholder="List your responsibilities and achievements..."></textarea>
+                </div>
+                <button type="button" class="btn">Add experience</button>
+                
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>Education</h3>
+                <div class="form-group">
+                    <div>
+                        <label>Degree/Diploma</label>
+                        <input type="text" placeholder="e.g. Bachelor of Technology">
+                    </div>
+                    <div>
+                        <label>College/University</label>
+                        <input type="text" placeholder="College/University Name">
+                    </div>
+                    <div>
+                        <label>Year of graduation</label>
+                        <input type="text" placeholder="e.g. 2026">
+                    </div>
+                </div>
+                <div class="single-column">
+                    <label>Notable academic achievements</label>
+                    <textarea placeholder="List your achievements..."></textarea>
+                </div>
+                <button type="button" class="btn">Add education</button>
+                
+                <hr style="border: 0; height: 1px; background: #ddd; margin: 2rem 0;">
+
+                <h3>Extras</h3>
+                <div class="add-input-group">
+                    <label>Blog/articles</label>
+                    <input type="text" placeholder="https://yourblog.com/post">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+                <div class="add-input-group" style="margin-top: 1rem;">
+                    <label>Testimonials</label>
+                    <input type="text" placeholder="Short testimonial">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+                <div class="add-input-group" style="margin-top: 1rem;">
+                    <label>Awards & recognitions</label>
+                    <input type="text" placeholder="Award title">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+                <div class="add-input-group" style="margin-top: 1rem;">
+                    <label>Hobbies/Interests</label>
+                    <input type="text" placeholder="e.g. Open-source, Chess">
+                    <button type="button" class="add-btn">Add</button>
+                </div>
+
+                <div style="text-align: right; margin-top: 2rem;">
+                    <button type="submit" class="btn">Save profile</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="upload" class="page">
+            <h2>Upload your document</h2>
+            <form>
+                <label>Title (optional)</label>
+                <input type="text" placeholder="e.g. John Doe HSC Marksheet">
+
+                <label>Category</label>
+                <select>
+                    <option>Select a category</option>
+                    <option>Course Certificate</option>
+                    <option>Hackathon Certificate</option>
+                    <option>Sports Certificate</option>
+                    <option>E-Certificate</option>
+                    <option>Research Paper</option>
+                    <option>Non-Academic Achievement</option>
+                    <option>Others</option>
+                </select>
+
+                <label>Upload file</label>
+                <div class="file-upload">
+                    <p>Drag & drop your file here, or <span class="browse">browse</span></p>
+                    <small>PDF, PNG, JPG up to 10MB</small>
+                </div>
+
+                <label>Description (optional)</label>
+                <textarea placeholder="Add any relevant notes..."></textarea>
+
+                <button type="submit" class="btn">Upload</button>
+            </form>
+        </section>
+
+        <section id="documents" class="page">
+            <h2>My Documents</h2>
+            <div class="documents-grid">
+                <div class="document-card">
+                    <h4>Gemini Google Certificate <span class="category">E-Certificate</span></h4>
+                    <p>gemini google certificate.pdf • 597 KB • 9/25/2025, 12:21:05 PM</p>
+                    <div class="document-actions">
+                        <span class="status-badge status-approved">approved</span>
+                        <button class="view-btn">👁️ View</button>
+                        <button class="delete-btn">🗑️ Delete</button>
+                    </div>
+                </div>
+
+                <div class="document-card">
+                    <h4>Gen AI <span class="category">Course Certificate</span></h4>
+                    <p>gen Ai certificate.pdf • 596 KB • 9/25/2025, 12:20:35 PM</p>
+                    <div class="document-actions">
+                        <span class="status-badge status-rejected">rejected</span>
+                        <button class="view-btn">👁️ View</button>
+                        <button class="delete-btn">🗑️ Delete</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</body>
+</html>

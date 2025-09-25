@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .container-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .doc-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+        .filter-btn.active {
+            background-color: #e0f2fe; /* Custom color for active button */
+            color: #0369a1;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="bg-white container-shadow">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">
+                <span class="text-indigo-600">Admin</span> Console
+            </h1>
+            <nav class="flex items-center space-x-4 text-sm font-medium">
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Search students</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Approve/Reject documents</a>
+                <a href="index.html" class="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition" onclick="logout()">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="md:col-span-1 bg-white p-6 rounded-xl container-shadow flex flex-col h-full">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Search students</h2>
+            <p class="text-sm text-gray-500 mb-4">Name, email, enrollment, program</p>
+            <input type="text" id="search-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" placeholder="Start typing...">
+            
+            <div id="student-list" class="space-y-4 overflow-y-auto flex-grow">
+                <div onclick="selectStudent('dha1756')" class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200">
+                    <h3 class="text-md font-semibold text-gray-800">Dharmesh Bhatt</h3>
+                    <p class="text-sm text-gray-500">dharmeshbhatt1756@gmail.com</p>
+                    <p class="text-sm text-gray-500">Enroll: IT24OP1024 • B.Tech IT • Year 2</p>
+                    <div class="mt-2 text-xs text-right font-medium text-gray-500">2 docs</div>
+                </div>
+                <div onclick="selectStudent('sample-student')" class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200">
+                    <h3 class="text-md font-semibold text-gray-800">dharmesh@gmail.com</h3>
+                    <p class="text-sm text-gray-500">dharmesh@gmail.com</p>
+                    <div class="mt-2 text-xs text-right font-medium text-gray-500">0 docs</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:col-span-2 bg-white p-6 rounded-xl container-shadow h-full">
+            <div id="student-details-container" class="">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Student details</h2>
+                
+                <div id="profile-info" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div>
+                        <p class="text-gray-500 text-sm">Full name: <span id="full-name" class="font-medium text-gray-900">Dharmesh Bhatt</span></p>
+                        <p class="text-gray-500 text-sm">Email: <span id="email" class="font-medium text-gray-900">dharmeshbhatt1756@gmail.com</span></p>
+                        <p class="text-gray-500 text-sm">Program: <span id="program" class="font-medium text-gray-900">B.Tech IT</span></p>
+                        <div class="flex space-x-2 mt-2">
+                             <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">LinkedIn</a>
+                             <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">GitHub</a>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Title: <span id="title" class="font-medium text-gray-900">Web Developer</span></p>
+                        <p class="text-gray-500 text-sm">Enrollment: <span id="enrollment" class="font-medium text-gray-900">IT24OP1024</span></p>
+                        <p class="text-gray-500 text-sm">Year: <span id="year" class="font-medium text-gray-900">2</span></p>
+                    </div>
+                </div>
+
+                <div id="document-counts" class="flex flex-wrap space-x-2 text-sm font-medium mb-8">
+                    <span id="pending-count" class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">0 pending</span>
+                    <span id="approved-count" class="bg-green-100 text-green-800 px-3 py-1 rounded-full">1 approved</span>
+                    <span id="rejected-count" class="bg-red-100 text-red-800 px-3 py-1 rounded-full">1 rejected</span>
+                    <span id="total-count" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full">2 total</span>
+                </div>
+
+                <h3 id="docs-header" class="text-xl font-semibold text-gray-800 mb-4">Documents for dharmeshbhatt1756@gmail.com</h3>
+
+                <div class="flex space-x-2 mb-6">
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100 active" data-filter="all">All</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="pending">Pending</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="approved">Approved</button>
+                    <button class="filter-btn px-4 py-2 text-sm rounded-lg font-medium text-gray-600 hover:bg-gray-100" data-filter="rejected">Rejected</button>
+                </div>
+
+                <div id="documents-list" class="space-y-6">
+                    <div class="p-4 rounded-lg bg-gray-50 container-shadow">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-semibold text-gray-800">Gemini Google Certificate</span>
+                                <span class="doc-status text-xs bg-gray-200 text-gray-700">e-certificate</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">gemini google certificate.pdf • 597 KB • 9/25/2025, 12:21:05 PM</p>
+                        <div class="space-x-2">
+                            <span class="doc-status bg-green-100 text-green-800">approved</span>
+                            <button onclick="approveDocument(1)" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Approve</button>
+                            <button onclick="rejectDocument(1)" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-red-50 hover:text-red-700 transition">Reject</button>
+                            <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Mark pending</button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 rounded-lg bg-gray-50 container-shadow">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-semibold text-gray-800">Gen AI</span>
+                                <span class="doc-status text-xs bg-gray-200 text-gray-700">course-cert</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">gen ai certificate.pdf • 596 KB • 9/25/2025, 12:20:35 PM</p>
+                        <div class="space-x-2">
+                            <span class="doc-status bg-red-100 text-red-800">rejected</span>
+                            <button onclick="approveDocument(2)" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Approve</button>
+                            <button onclick="rejectDocument(2)" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-red-50 hover:text-red-700 transition">Reject</button>
+                            <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Mark pending</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="no-student-selected" class="hidden">
+                <p>Select a student to view their details and documents.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // ... (Your existing JavaScript code)
+        // I've updated the `selectStudent` function to manually set the data
+        // to mimic the dynamic behavior seen in the screenshot.
+
+        function selectStudent(studentId) {
+            const sampleData = {
+                'dha1756': {
+                    name: 'Dharmesh Bhatt',
+                    email: 'dharmeshbhatt1756@gmail.com',
+                    enrollment: 'IT24OP1024',
+                    program: 'B.Tech IT',
+                    year: '2',
+                    title: 'Web Developer',
+                    documents: [
+                        { id: 1, title: 'Gemini Google Certificate', category: 'e-certificate', fileName: 'gemini google certificate.pdf', size: '597 KB', date: '9/25/2025, 12:21:05 PM', status: 'approved' },
+                        { id: 2, title: 'Gen AI', category: 'course-cert', fileName: 'gen ai certificate.pdf', size: '596 KB', date: '9/25/2025, 12:20:35 PM', status: 'rejected' }
+                    ]
+                }
+            };
+
+            const student = sampleData[studentId];
+
+            if (student) {
+                document.getElementById('no-student-selected').classList.add('hidden');
+                document.getElementById('student-details-container').classList.remove('hidden');
+
+                document.getElementById('full-name').textContent = student.name;
+                document.getElementById('email').textContent = student.email;
+                document.getElementById('program').textContent = student.program;
+                document.getElementById('title').textContent = student.title;
+                document.getElementById('enrollment').textContent = student.enrollment;
+                document.getElementById('year').textContent = student.year;
+
+                const pendingCount = student.documents.filter(d => d.status === 'pending').length;
+                const approvedCount = student.documents.filter(d => d.status === 'approved').length;
+                const rejectedCount = student.documents.filter(d => d.status === 'rejected').length;
+                const totalCount = student.documents.length;
+                
+                document.getElementById('pending-count').textContent = `${pendingCount} pending`;
+                document.getElementById('approved-count').textContent = `${approvedCount} approved`;
+                document.getElementById('rejected-count').textContent = `${rejectedCount} rejected`;
+                document.getElementById('total-count').textContent = `${totalCount} total`;
+
+                renderDocuments(student.documents);
+            }
+        }
+
+        function renderDocuments(documents, filter = 'all') {
+            const documentsListDiv = document.getElementById('documents-list');
+            documentsListDiv.innerHTML = '';
+            let filteredDocs = documents;
+
+            if (filter !== 'all') {
+                filteredDocs = documents.filter(doc => doc.status === filter);
+            }
+
+            if (filteredDocs.length === 0) {
+                documentsListDiv.innerHTML = `<p class="text-gray-500 text-center mt-8">No documents found.</p>`;
+                return;
+            }
+
+            filteredDocs.forEach(doc => {
+                const statusColor = doc.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                      doc.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                      'bg-yellow-100 text-yellow-800';
+
+                const docCard = document.createElement('div');
+                docCard.className = `p-4 rounded-lg bg-gray-50 container-shadow`;
+                docCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-semibold text-gray-800">${doc.title}</span>
+                            <span class="doc-status text-xs bg-gray-200 text-gray-700">${doc.category}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">${doc.fileName} • ${doc.size} • ${doc.date}</p>
+                    <div class="space-x-2">
+                        <span class="doc-status ${statusColor}">${doc.status}</span>
+                        <button onclick="approveDocument(${doc.id})" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Approve</button>
+                        <button onclick="rejectDocument(${doc.id})" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-red-50 hover:text-red-700 transition">Reject</button>
+                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Mark pending</button>
+                    </div>
+                `;
+                documentsListDiv.appendChild(docCard);
+            });
+        }
+        
+        // Function to update the document status counts.
+        function updateDocumentCounts(docs) {
+             const pending = docs.filter(d => d.status === 'pending').length;
+             const approved = docs.filter(d => d.status === 'approved').length;
+             const rejected = docs.filter(d => d.status === 'rejected').length;
+             const total = docs.length;
+        
+             document.getElementById('pending-count').textContent = `${pending} pending`;
+             document.getElementById('approved-count').textContent = `${approved} approved`;
+             document.getElementById('rejected-count').textContent = `${rejected} rejected`;
+             document.getElementById('total-count').textContent = `${total} total`;
+        }
+        
+        // Event listeners for filtering documents
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+
+                if (currentStudent) {
+                    renderDocuments(currentStudent.documents, e.target.dataset.filter);
+                }
+            });
+        });
+
+        // Function to handle document approval
+        async function approveDocument(docId) {
+            // In a real app, this would send an API call to your back-end to update the document status.
+            console.log(`Approving document with ID: ${docId}`);
+            const doc = currentStudent.documents.find(d => d.id === docId);
+            if (doc) {
+                doc.status = 'approved';
+                renderDocuments(currentStudent.documents, document.querySelector('.filter-btn.active').dataset.filter);
+                updateDocumentCounts(currentStudent.documents);
+            }
+        }
+
+        // Function to handle document rejection
+        async function rejectDocument(docId) {
+            // In a real app, this would send an API call to your back-end to update the document status.
+            console.log(`Rejecting document with ID: ${docId}`);
+            const doc = currentStudent.documents.find(d => d.id === docId);
+            if (doc) {
+                doc.status = 'rejected';
+                renderDocuments(currentStudent.documents, document.querySelector('.filter-btn.active').dataset.filter);
+                updateDocumentCounts(currentStudent.documents);
+            }
+        }
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Your existing logic here. I've added a call to select a default student.
+            selectStudent('dha1756');
+        });
+    </script>
+</body>
+</html>
